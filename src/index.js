@@ -6,7 +6,10 @@ import router from './router.js';
 import mongoose from 'mongoose';
 import errorHandler from './middleware/errorMiddleware.js';
 import cookieParser from 'cookie-parser';
-dotenv.config();
+
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config();
+}
 
 const app = express();
 
@@ -20,11 +23,17 @@ app.use(
   })
 ); //allows apis that have different domains to be called
 app.use(cookieParser());
-app.use(morgan('tiny')); //helps with debugging, e.g. gives additional info from requests
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('tiny')); //helps with debugging, e.g. gives additional info from requests
+}
 app.use(router);
 app.use(errorHandler);
 
-mongoose.connect(process.env.MONGO_URI).then(() => {
-  console.log('starting on port 8080');
-  app.listen(8080);
-});
+mongoose
+  .connect(
+    `mongodb+srv://dkilaz:${process.env.MONGO_PASSWORD}@cluster0.x3sd4gr.mongodb.net/todo?retryWrites=true&w=majority&appName=Cluster0`
+  )
+  .then(() => {
+    console.log('starting on port 8080');
+    app.listen(8080);
+  });
