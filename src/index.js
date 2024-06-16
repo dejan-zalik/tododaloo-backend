@@ -18,7 +18,10 @@ app.use(express.json()); //allows processing json requests
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin:
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:5173'
+        : 'https://tododaloo.xyz',
     credentials: true,
   })
 ); //allows apis that have different domains to be called
